@@ -1,6 +1,6 @@
 // Name: David Weir
 // Student Number: 19433086
-// I acknowledge all terms of DCU's Academic Ibtegrity Policys
+// I acknowledge all terms of DCU's Academic Integrity Policy
 
 #include <stdio.h> 
 #include <string.h>
