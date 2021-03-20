@@ -97,7 +97,6 @@ int dir()
 // print environment variables
 int enviro(char *envp[])
 {
-    extern char **environ;
     // loop through array of environments variables, printing them until end
     for(int i=0; envp[i] != NULL; i++)
     {
@@ -117,7 +116,7 @@ void pauseShell()
 int cd(char *args[])
 {
     char cwd[1024];
-    getcwd(cwd, sizeof(cwd)); // gets cwd
+    getcwd(cwd, sizeof(cwd)); // gets cwd (current working directory)
 
     // if no directory provided print the cwd
     if(args[1] == NULL)
@@ -128,7 +127,6 @@ int cd(char *args[])
     {
         chdir(args[1]); // change the directory to the user given target
         getcwd(cwd, sizeof(cwd)); // get the new cwd
-        // setenv("PWD", cwd, 1);
         putenv("PWD=cwd"); // set the PWD environment varable to the new cwd
     }
 }
@@ -142,40 +140,50 @@ int echo(char *args[])
     {
         printf("%s ", args[i]);
     }
+    
+    printf("\n");
 }
 
+// displays the user manual "readme" found in the manual directory to the user using the more filter
 int help()
 {
-    FILE *file;
-    char c[1000];
-    int numlines=0;
-
-    file = fopen("readme.md", "r"); // opens the manual under readme.md
-
-    // error handling if file cant be found or reached
-    if(file == NULL)
-    {
-        printf("Error: cannot opening file.");
-    }
-
-    // while the file is not at the end get take a line from the file
-    while(fgets(c, sizeof(c), file) != NULL)
-    {
-        // if statement implements more filter
-        // we output lines to stdout until we have read 20 lines after this we reset our count of lines to 0 and wait for the user to input Enter to continue the loop and read more of the file
-        if(numlines < 19)
-        {
-            fputs(c, stdout);
-            numlines++;
-        }
-        else
-        {
-            fputs(c, stdout); // outputs the line for count of 21 which is skipped otherwise
-            numlines = 0; // reset our count
-            getchar(); // wait for the user
-        }
-    }
-
-    fclose(file); // closes readme file
-
+    chdir(getenv("shell")); // change directory into the shell path (the shell path is the shell environment variable that is set in myshell.c main() )
+    system("more ../manual/readme"); // calls the host system to open the file readme in the manual directory using the linux more filter feature
 }
+
+// my own attempt to create a system similar to the more filter for help()
+// int help()
+// {
+//     FILE *file;
+//     char c[1000];
+//     int numlines=0;
+
+//     file = fopen("readme", "r"); // opens the manual under readme.md
+
+//     // error handling if file cant be found or reached
+//     if(file == NULL)
+//     {
+//         printf("Error: cannot opening file.");
+//     }
+
+//     // while the file is not at the end get take a line from the file
+//     while(fgets(c, sizeof(c), file) != NULL)
+//     {
+//         // if statement implements more filter
+//         // we output lines to stdout until we have read 20 lines after this we reset our count of lines to 0 and wait for the user to input Enter to continue the loop and read more of the file
+//         if(numlines < 19)
+//         {
+//             fputs(c, stdout);
+//             numlines++;
+//         }
+//         else
+//         {
+//             fputs(c, stdout); // outputs the line for count of 21 which is skipped otherwise
+//             numlines = 0; // reset our count
+//             getchar(); // wait for the user
+//         }
+//     }
+
+//     fclose(file); // closes readme file
+
+// }
