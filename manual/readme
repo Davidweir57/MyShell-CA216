@@ -1,0 +1,121 @@
+Name: 
+        myshell
+
+Description:
+
+        This simple shell is written in the C programming language as part of a project for CA216. The shell currently supports a number of
+built-in commands, batchfile execution / batch mode, external command functionality and background execution functionality. This is a user manual
+to act as a guide on how to use this shell programme.
+
+List of built-in commands:
+
+    1. quit: Exits the shell program
+    2. clr: Clears the screen
+    3. mkdir: mkdir <directory name> Takes an argument, a name, and creates a new folder/directory with that name in the current working
+       directory.
+    4. help: Opens the shells user manual.
+    5. dir: lists all files and directorys including hidden files in the current directory in a list format with their names and sizes.
+    6. echo: echo <input> Prints any words following the command "echo" to standard output.
+    7. environ: Displays a list of all the environment variables.
+    8. cd: cd <directory> Takes an argument, a directory path, and moves the user into the directory path provided.
+    9. pause: Pauses the program until Enter is inputted.
+
+Environment Variables:
+
+        Environment variables are variables with values usually predfined/set by the operating system. It consists of a name and value
+        in the form "name=value", the name is case-senesitive and the value can be anything represented as a string. [2]
+        These variables are most often used to limit the need for modify applications because of changing configuration data.
+
+        In our case however, we use the ability to alter these varibles using setenv and putenv to provide support and additional
+        functionality to the myshell program and it's inbuilt commands. For example:
+
+        - The environ() inbuilt function prints all of the environment variables on the current machine to standard output for the
+          user to see.
+
+        - We also alter the environment variable "PWD", which contains the path of the current working directory, when use the inbuilt cd
+          command. As cd is changing our directory we use setenv or putenv to change the value of the "PWD" to the directory we want to
+          move to as it will become the new current working directory.
+        
+        - myshell also changes the "SHELL" variable so that it contains the path of the shell executable (where myshell was executed)
+          by appending /myshell to "SHELL" like so : shell=/myshell.
+
+I/O Redirection:
+
+        I/O Redirection or Input/Output Redirection describes how the user can control the input of commands to the shell and how they can alter
+        how the outputs these commands. In operation, the user can send the shell a command, input and tell it how to output the result to a
+        text file (extension .txt). This is described efficiently as "Redirection simply means capturing output from a file, command, program,
+        script, or even code block within a script". [4]
+
+        I/O Redirection is currently not supported by this implemnetation of myshell. However, planned usage would look like this:
+
+        Usage: input > command > output
+
+        Output redirection token options:
+
+                > - Redirects output to the given text file. This option creates a new file if one with that name does not exist already and
+                    truncated (or overwritten) if it already exists.
+
+                >> - Creates a new text file with the given name if it does not already exist or appends the output to the file if it
+                     already exists.
+
+Process Concept:
+        According to Computer Systems : A Programmer’s Perspective "a process is an instance of a program in execution." [1] In other words
+        a process is an instance of a computer program being executed i.e. as system running some program. Processes can consist of many
+        threads executing instructions or just one.
+
+        In C we can use the fork() function to create or "fork" a new process called a child process from the parent. The child process
+        is called from the parent process, forking allows the parent process to run simultaneously with one or many
+        child processes. This is put into effect in our implemnetation of Background Execution. Each of these
+        processes have a unique identifier called a PID or process ID.
+
+Background and Foreground Execution:
+
+        myshell can run commands in both the background and foreground:
+
+        Background:
+                Usage: <command> <arguments> &
+
+                In myshell and other unix environments a process is sent to background execution using the ampersand (&) symbol.
+                When a command is executed in the background myshell does not wait for this command to be executed before printing
+                the prompt again and accepting more user input. This is because the process is being run in the background
+                simultaneously with the shell. Background process are not connected to the terminal and cannot communicate with
+                the user without stopping and being reconnected to the terminal. [5] When the background process is done it is
+                still outputted to stdout.
+
+        Foreground:
+                Usage: <command <arguments>
+
+                Without the &, commands are run as normal. The shell waits for the command process to complete before accepting
+                user input again. These process are connected to the terminal and are considered to be executed in the
+                foreground because it can still communicate with the user via the terminal.
+
+        The Difference:
+                In short, foreground executed processes are connected to the terminal and can communicate with the user. The
+                shell waits for the process to end before accepting another command,
+
+                As opposed to background executed processes, that are disconnected from the terminal and cannot communicate
+                with the user. These processes can run in the backgorund while the shell accepts more commands from the
+                user at the same time as these processes are running.
+
+Batchfile:
+
+        myshell can also take commands from a batchfile. A batchfile is simply a text file containing a list of commands which when passed
+        to myshell will be executed sequentially in the order they are given in the file. [3]
+
+        Usage: ./myshell <batchfile name>
+
+        Batchfiles are passed when booting up the myshell executable. These commands are executed line by line
+        until we reach the EOF. The output of these commands are sent to stdout (standard output a.k.a the screen)
+
+References:
+
+   1. E.Bryant, Randal and O'Hallaron, David R. (2016) Computer Systems : A Programmer’s Perspective earson Education Limited, Page 758
+   2. environ(7) — Linux manual page https://man7.org/linux/man-pages/man7/environ.7.html
+   3. Microsoft Documentation, 10/08/2009, https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2003/cc758944(v=ws.10)?redirectedfrom=MSDN
+   4. Advanced Bash-Scripting Guide, https://tldp.org/LDP/abs/html/io-redirection.html
+   5. Section 9: Interaction and Job Control, http://fsl.fmrib.ox.ac.uk/fslcourse/unix_intro/job.html#:~:text=A%20job%20is%20said%20to,cannot%20communicate%20with%20the%20user.
+
+
+// Name: David Weir
+// Student Number: 19433086
+// I acknowledge all terms of DCU's Academic Integrity Policy
